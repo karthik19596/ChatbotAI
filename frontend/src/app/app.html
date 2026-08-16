@@ -1,0 +1,58 @@
+<main class="page">
+  <section class="chat-card" aria-label="Ollama chatbot">
+    <header class="chat-header">
+      <div>
+        <p class="eyebrow">LOCAL AI ASSISTANT</p>
+        <h1>Ollama Chatbot</h1>
+        <p class="status"><span></span> Connected to your local model</p>
+      </div>
+      <button class="clear-button" type="button" (click)="clearChat()">
+        Clear
+      </button>
+    </header>
+
+    <section class="messages" aria-live="polite">
+      @if (messages().length === 0) {
+        <div class="empty-state">
+          <strong>Start a conversation</strong>
+          <span>Ask your local AI assistant anything.</span>
+        </div>
+      }
+
+      @for (item of messages(); track $index) {
+        <div class="message-row" [class.user-row]="item.role === 'user'">
+          <div class="avatar">{{ item.role === 'user' ? 'You' : 'AI' }}</div>
+          <div class="message" [class.user-message]="item.role === 'user'">
+            {{ item.content }}
+          </div>
+        </div>
+      }
+
+      @if (isLoading()) {
+        <div class="message-row">
+          <div class="avatar">AI</div>
+          <div class="message thinking">Thinking<span>.</span><span>.</span><span>.</span></div>
+        </div>
+      }
+    </section>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    <form class="composer" (submit)="$event.preventDefault(); sendMessage()">
+      <input
+        [ngModel]="message()"
+        (ngModelChange)="message.set($event)"
+        name="message"
+        type="text"
+        placeholder="Type your message..."
+        autocomplete="off"
+        [disabled]="isLoading()"
+      />
+      <button type="submit" [disabled]="isLoading() || !message().trim()">
+        {{ isLoading() ? 'Sending...' : 'Send' }}
+      </button>
+    </form>
+  </section>
+</main>

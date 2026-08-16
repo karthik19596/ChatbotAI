@@ -1,0 +1,18 @@
+# Java and Maven
+backend/target/
+backend/.idea/
+*.class
+
+# Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.vscode/
+
+# IDE files
+.idea/
+*.iml
+
+# Operating system files
+.DS_Store
+Thumbs.db
