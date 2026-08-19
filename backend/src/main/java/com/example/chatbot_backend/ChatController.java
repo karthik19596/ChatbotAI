@@ -29,14 +29,23 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<?> chat(@RequestBody ChatRequest request) {
-        if (request == null || request.message() == null || request.message().isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Message must not be empty."));
+        if (request == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Request must not be empty."));
         }
+
+        boolean hasMessage = request.message() != null && !request.message().isBlank();
+        boolean hasFile = request.fileContent() != null && !request.fileContent().isBlank();
+
+        if (!hasMessage && !hasFile) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Provide a message or a file."));
+        }
+
+        String prompt = buildPrompt(request, hasMessage, hasFile);
 
         try {
             String requestBody = objectMapper.writeValueAsString(Map.of(
                     "model", MODEL,
-                    "prompt", request.message(),
+                    "prompt", prompt,
                     "stream", false
             ));
 
@@ -75,7 +84,31 @@ public class ChatController {
         }
     }
 
-    public record ChatRequest(String message) {
+    private String buildPrompt(ChatRequest request, boolean hasMessage, boolean hasFile) {
+        StringBuilder prompt = new StringBuilder();
+
+        if (hasFile) {
+            String fileName = request.fileName() != null && !request.fileName().isBlank()
+                    ? request.fileName()
+                    : "uploaded-file";
+            prompt.append("The user uploaded a file named \"")
+                  .append(fileName)
+                  .append("\". Its contents are between the markers below:\n\n")
+                  .append("----- BEGIN FILE -----\n")
+                  .append(request.fileContent())
+                  .append("\n----- END FILE -----\n\n");
+        }
+
+        if (hasMessage) {
+            prompt.append("User request: ").append(request.message());
+        } else {
+            prompt.append("User request: Please review the uploaded file content and provide a summary.");
+        }
+
+        return prompt.toString();
+    }
+
+    public record ChatRequest(String message, String fileName, String fileContent) {
     }
 
     public record ChatResponse(String response) {
