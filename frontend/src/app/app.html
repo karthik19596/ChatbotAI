@@ -15,7 +15,7 @@
       @if (messages().length === 0) {
         <div class="empty-state">
           <strong>Start a conversation</strong>
-          <span>Ask your local AI assistant anything.</span>
+          <span>Ask your local AI assistant anything, or attach a text file.</span>
         </div>
       }
 
@@ -23,6 +23,9 @@
         <div class="message-row" [class.user-row]="item.role === 'user'">
           <div class="avatar">{{ item.role === 'user' ? 'You' : 'AI' }}</div>
           <div class="message" [class.user-message]="item.role === 'user'">
+            @if (item.fileName) {
+              <div class="attachment">📎 {{ item.fileName }}</div>
+            }
             {{ item.content }}
           </div>
         </div>
@@ -40,7 +43,30 @@
       <p class="error" role="alert">{{ error() }}</p>
     }
 
+    @if (selectedFile()) {
+      <div class="file-chip">
+        <span>📎 {{ selectedFile()?.name }}</span>
+        <button type="button" (click)="removeSelectedFile()" title="Remove file">✕</button>
+      </div>
+    }
+
     <form class="composer" (submit)="$event.preventDefault(); sendMessage()">
+      <input
+        #fileInput
+        type="file"
+        class="hidden-file"
+        accept=".txt,.md,.csv,.json"
+        (change)="onFileSelected($event)"
+      />
+      <button
+        type="button"
+        class="attach-button"
+        (click)="fileInput.click()"
+        [disabled]="isLoading()"
+        title="Attach a text file (.txt, .md, .csv, .json)"
+      >
+        📎
+      </button>
       <input
         [ngModel]="message()"
         (ngModelChange)="message.set($event)"
@@ -50,9 +76,15 @@
         autocomplete="off"
         [disabled]="isLoading()"
       />
-      <button type="submit" [disabled]="isLoading() || !message().trim()">
-        {{ isLoading() ? 'Sending...' : 'Send' }}
-      </button>
+      @if (isLoading()) {
+        <button type="button" class="cancel-button" (click)="cancelRequest()">
+          Cancel
+        </button>
+      } @else {
+        <button type="submit" [disabled]="!message().trim() && !selectedFile()">
+          Send
+        </button>
+      }
     </form>
   </section>
 </main>

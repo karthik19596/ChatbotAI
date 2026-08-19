@@ -175,7 +175,7 @@ h1 {
   background: #ffffff;
 }
 
-.composer input {
+.composer input[type="text"] {
   min-width: 0;
   flex: 1;
   padding: 13px 15px;
@@ -186,7 +186,7 @@ h1 {
   font: inherit;
 }
 
-.composer input:focus {
+.composer input[type="text"]:focus {
   border-color: #6366f1;
   box-shadow: 0 0 0 3px #e0e7ff;
 }
@@ -205,6 +205,86 @@ h1 {
 .composer button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+.attach-button {
+  flex: 0 0 auto;
+  width: 44px;
+  padding: 0 !important;
+  display: grid;
+  place-items: center;
+  background: #eef2ff !important;
+  color: #4f46e5 !important;
+  border: 1px solid #c7d2fe !important;
+  font-size: 1.1rem;
+}
+
+.attach-button:hover:not(:disabled) {
+  background: #e0e7ff !important;
+}
+
+.cancel-button {
+  background: #b91c1c !important;
+}
+
+.cancel-button:hover {
+  background: #991b1b !important;
+}
+
+.hidden-file {
+  display: none;
+}
+
+.file-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 24px;
+  padding: 8px 12px;
+  color: #312e81;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+.file-chip button {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: #b91c1c;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.file-chip button:hover {
+  background: #fee2e2;
+}
+
+.attachment {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 3px 8px;
+  color: #312e81;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.user-message .attachment {
+  color: #e0e7ff;
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 @keyframes blink {
